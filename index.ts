@@ -103,6 +103,7 @@ function Phonetic(): Phonetic {
 
     if (key.length !== 1) return;
     evt.preventDefault();
+    evt.stopPropagation();
     anchor.append(key);
   }
   function onPaste(evt: ClipboardEvent) {
@@ -146,11 +147,20 @@ function Anchor(db: [string, string][]): Anchor {
    */
   function append(char: string) {
     let data = anchor.dataset.data;
+
+    if (/\s/.test(char)) {
+      insert((data && match(data).shift()) || ["", char]);
+      anchor.dataset.data = "";
+      attach();
+      return;
+    }
+
     const entries = match(data + char);
     if (entries.length === 0) {
-      anchor.dataset.data = char;
+      anchor.dataset.data = "";
       const entry = data ? find(data) : null;
       if (entry) insert(entry);
+      append(char);
     } else if (entries.length === 1) {
       const entry = entries[0];
       if (entry[0] === data + char) {
@@ -175,8 +185,10 @@ function Anchor(db: [string, string][]): Anchor {
 
   // 如果 data 长度不等 0, 移动 anchor 到 caret 前
   function attach() {
-    anchor.remove();
-    if (anchor.dataset.data.length === 0) return;
+    const prefix = anchor.dataset.data.trim();
+    anchor.dataset.data = prefix;
+
+    if (prefix.length === 0) return anchor.remove();
     const selection = document.getSelection();
     const range = selection.getRangeAt(0);
     range.deleteContents();
@@ -184,7 +196,6 @@ function Anchor(db: [string, string][]): Anchor {
     range.collapse(true);
 
     // 如果匹配到了多个，显示备选列表
-    const prefix = anchor.dataset.data;
     const entries = prefix ? match(prefix) : [];
     anchor.innerHTML =
       entries.length === 0
