@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <title>AI-M</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://github.githubassets.com/favicons/favicon.svg"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script type="module">
+      import Phonetic from './index.ts'
+      import table from './sampa/en'
+
+
+      window.addEventListener('load', ()=> {
+        const container = document.getElementById('app');
+        Phonetic().table(table).attach(container);
+        }, {once: true})
+    </script>
+    <style>
+      html, body {
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+      }
+      #app {
+          margin: 31px;
+          padding: 0.3em;
+          line-height: 1.7em;
+          min-height: 1.7em;
+          border: 1px solid lightgrey;
+          outline: none;
+          white-space: pre;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" contenteditable="true"></div>
+  </body>
+</html>
