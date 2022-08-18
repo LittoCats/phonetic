@@ -160,7 +160,7 @@ function Anchor(db: [string, string][]): Anchor {
       anchor.dataset.data = "";
       const entry = data ? find(data) : null;
       if (entry) insert(entry);
-      append(char);
+      if (some(char)) append(char);
     } else if (entries.length === 1) {
       const entry = entries[0];
       if (entry[0] === data + char) {
@@ -219,6 +219,10 @@ function Anchor(db: [string, string][]): Anchor {
    * 选种备选符号
    */
   function upset(index: number = 0) {}
+
+  function some(prefix: string) {
+    return db.some(([sc]) => sc.startsWith(prefix));
+  }
 
   function match(prefix: string) {
     return db.filter(([sc]) => sc.startsWith(prefix));
